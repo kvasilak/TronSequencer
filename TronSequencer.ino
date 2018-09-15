@@ -225,67 +225,67 @@ void GraceOff(void)
 
 #define WaveDelay 100
 
-void WaveRight(bool simulate)
+void WaveRight(bool show)
 {
-    digitalWrite(ElWire[RightArm],HIGH);
+    if( show)digitalWrite(ElWire[RightArm],HIGH);
     delay(WaveDelay);
-    digitalWrite(ElWire[RightArm],LOW);
+    if( show)digitalWrite(ElWire[RightArm],LOW);
     delay(WaveDelay);
-    digitalWrite(ElWire[RightLeg],HIGH);
-    digitalWrite(ElWire[RightBody],HIGH);      
+    if( show)digitalWrite(ElWire[RightLeg],HIGH);
+    if( show)digitalWrite(ElWire[RightBody],HIGH);      
     delay(WaveDelay);
-    digitalWrite(ElWire[RightLeg],LOW);
-    digitalWrite(ElWire[RightBody],LOW); 
+    if( show)digitalWrite(ElWire[RightLeg],LOW);
+    if( show)digitalWrite(ElWire[RightBody],LOW); 
     delay(WaveDelay);
-    digitalWrite(ElWire[Head],HIGH);
-    digitalWrite(ElWire[Eyes],HIGH); 
+    if( show)digitalWrite(ElWire[Head],HIGH);
+    if( show)digitalWrite(ElWire[Eyes],HIGH); 
     delay(WaveDelay);
-    digitalWrite(ElWire[Head],LOW);
-    digitalWrite(ElWire[Eyes],LOW); 
+    if( show)digitalWrite(ElWire[Head],LOW);
+    if( show)digitalWrite(ElWire[Eyes],LOW); 
     delay(WaveDelay);
-    digitalWrite(ElWire[LeftLeg],HIGH);
-    digitalWrite(ElWire[LeftBody],HIGH); 
+    if( show)digitalWrite(ElWire[LeftLeg],HIGH);
+    if( show)digitalWrite(ElWire[LeftBody],HIGH); 
     delay(WaveDelay);
-    digitalWrite(ElWire[LeftLeg],LOW);
-    digitalWrite(ElWire[LeftBody],LOW); 
+    if( show)digitalWrite(ElWire[LeftLeg],LOW);
+    if( show)digitalWrite(ElWire[LeftBody],LOW); 
     delay(WaveDelay);
-    digitalWrite(ElWire[LeftArm],HIGH);
-    digitalWrite(ElWire[LeftArm],HIGH); 
+    if( show)digitalWrite(ElWire[LeftArm],HIGH);
+    if( show)digitalWrite(ElWire[LeftArm],HIGH); 
     delay(WaveDelay);
-    digitalWrite(ElWire[LeftArm],LOW);
-    digitalWrite(ElWire[LeftArm],LOW);
+    if( show)digitalWrite(ElWire[LeftArm],LOW);
+    if( show)digitalWrite(ElWire[LeftArm],LOW);
 }
 
-void WaveLeft(bool Simulate)
+void WaveLeft(bool show)
 {
     delay(WaveDelay);
-    digitalWrite(ElWire[LeftArm],HIGH);
-    digitalWrite(ElWire[LeftArm],HIGH); 
+    if( show)(ElWire[LeftArm],HIGH);
+    if( show)(ElWire[LeftArm],HIGH); 
     delay(WaveDelay);
-    digitalWrite(ElWire[LeftArm],LOW);
-    digitalWrite(ElWire[LeftArm],LOW); 
+    if( show)(ElWire[LeftArm],LOW);
+    if( show)(ElWire[LeftArm],LOW); 
     delay(WaveDelay);
-    digitalWrite(ElWire[LeftLeg],HIGH);
-    digitalWrite(ElWire[LeftBody],HIGH);
+    if( show)(ElWire[LeftLeg],HIGH);
+    if( show)(ElWire[LeftBody],HIGH);
     delay(WaveDelay);
-    digitalWrite(ElWire[LeftLeg],LOW);
-    digitalWrite(ElWire[LeftBody],LOW);
+    if( show)(ElWire[LeftLeg],LOW);
+    if( show)(ElWire[LeftBody],LOW);
     delay(WaveDelay);
-    digitalWrite(ElWire[Head],HIGH);
-    digitalWrite(ElWire[Eyes],HIGH); 
+    if( show)(ElWire[Head],HIGH);
+    if( show)(ElWire[Eyes],HIGH); 
     delay(WaveDelay);
-    digitalWrite(ElWire[Head],LOW);
-    digitalWrite(ElWire[Eyes],LOW); 
+    if( show)(ElWire[Head],LOW);
+    if( show)(ElWire[Eyes],LOW); 
     delay(WaveDelay);
-    digitalWrite(ElWire[RightLeg],HIGH);
-    digitalWrite(ElWire[RightBody],HIGH);      
+    if( show)(ElWire[RightLeg],HIGH);
+    if( show)(ElWire[RightBody],HIGH);      
     delay(WaveDelay);
-    digitalWrite(ElWire[RightLeg],LOW);
-    digitalWrite(ElWire[RightBody],LOW); 
+    if( show)(ElWire[RightLeg],LOW);
+    if( show)(ElWire[RightBody],LOW); 
     delay(WaveDelay);
-    digitalWrite(ElWire[RightArm],HIGH);
+    if( show)(ElWire[RightArm],HIGH);
     delay(WaveDelay);
-    digitalWrite(ElWire[RightArm],LOW);
+    if( show)(ElWire[RightArm],LOW);
     
 }
 
