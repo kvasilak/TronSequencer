@@ -18,11 +18,12 @@
 // Set up nRF24L01 radio on SPI bus plus pins 9 & 10 (CE & CS)
 RF24 radio(9,10);
 
-// EL Enable Pins on the EL Sequencer
-const uint8_t ElWire[] = { 2,3,4,5,6,7,8,13 };
+// Pins on the LED board for LED's
+const uint8_t led_pins[] = { 2,3,4,5,6,7,8,9 };
 
 // Single radio pipe address for the 2 nodes to communicate.
 const uint64_t pipe = 0xE8E8F0F0E1LL;
+
 uint8_t state = 0;
 void *StateFuncs[] = {AllOff,PowerUp,PowerDown,MotorCycle,KeithOn,GraceOn, Wave};
 
@@ -44,12 +45,14 @@ void setup(void)
   radio.printDetails();
 
   AllOff();
-  
 }
 
 void loop(void)
 {
-    delay(4);
+  int i;
+  for(i=0; i<sizeof(led_pins); i++)
+  {
+    digitalWrite(led_pins[i],LOW);
 
     // if there is data ready
     if ( radio.available() )
