@@ -4,28 +4,43 @@
 #include "RF24_config.h"
 #include <SPI.h>
 
-#define LeftLeg 2
-#define LeftBody 3
-#define LeftArm 4
+#define LeftLeg 0
+#define LeftBody 1
+#define LeftArm 2
 
-#define RightLeg 5
-#define RightArm 6
-#define RightBody 7
+#define RightLeg 3
+#define RightArm 4
+#define RightBody 5
 
-#define Head 12 //todo get pins for sequencer
-#define Eyes 13
+#define Head 6 
+#define Eyes 7
 
 // Set up nRF24L01 radio on SPI bus plus pins 9 & 10 (CE & CS)
 RF24 radio(9,10);
 
-// Pins on the LED board for LED's
-const uint8_t led_pins[] = { 2,3,4,5,6,7,8,9 };
+// EL Enable Pins on the EL Sequencer
+const uint8_t ElWire[] = { 2,3,4,5,6,7,8,13 };//todo get pins for sequencer
 
 // Single radio pipe address for the 2 nodes to communicate.
 const uint64_t pipe = 0xE8E8F0F0E1LL;
 
 uint8_t state = 0;
-void *StateFuncs[] = {AllOff,PowerUp,PowerDown,MotorCycle,KeithOn,GraceOn, Wave};
+uint8_t OldState = 0;
+
+void AllOff(void);
+void PowerUp(void);
+void PowerDown(void);
+void MotorCycle(void);
+void KeithOn(void);
+void GraceOn(void);
+void Wave(void);
+
+typedef void (* GenericFP)(void);
+GenericFP StateFuncs[] = {AllOff,PowerUp,PowerDown,MotorCycle,KeithOn,GraceOn, Wave};
+
+const uint8_t Grace = 1;
+const uint8_t Keith = 2;
+const uint8_t me = Grace;
 
 void setup(void)
 {
@@ -49,10 +64,7 @@ void setup(void)
 
 void loop(void)
 {
-  int i;
-  for(i=0; i<sizeof(led_pins); i++)
-  {
-    digitalWrite(led_pins[i],LOW);
+    delay(4);
 
     // if there is data ready
     if ( radio.available() )
@@ -67,12 +79,12 @@ void loop(void)
             if(state < sizeof(StateFuncs))
             {
                 OldState = state;
-                StateFuncs[state]; //call state function
-                printf("State Change: %d\r\n);
+                StateFuncs[state](); //call state function
+                printf("State Change: %d\r\n");
             }
             else
             {
-                printf("Unknown State: %d\r\n);
+                printf("Unknown State: %d\r\n");
             }
                 
         }
@@ -84,7 +96,7 @@ void AllOff(void)
 {
     // Turn EL Off
     int i;
-    for(i=0;i<sizeof(ElWire); i++;)
+    for(i=0;i<sizeof(ElWire); i++)
     {
       pinMode(ElWire[i],OUTPUT);
       digitalWrite(ElWire[i],HIGH);
@@ -162,13 +174,13 @@ void BodyPwrDwn(void)
 //then turn eyes off, delay, then back on briefly
 void PowerDown(void)
 {
-  BodyPwrDwnr();
+  BodyPwrDwn();
   
   digitalWrite(ElWire[Head],HIGH);
   delay(100);
   digitalWrite(ElWire[Head],LOW);
   delay(500);
-  digitalWrite(ElWire[eyes],HIGH);
+  digitalWrite(ElWire[Eyes],HIGH);
   delay(100);
   digitalWrite(ElWire[Eyes],LOW);
   delay(500);
@@ -201,13 +213,23 @@ void GraceOn(void)
   
 }
 
+void KeithOff(void)
+{
+  
+}
+
+void GraceOff(void)
+{
+  
+}
+
 #define WaveDelay 100
 
 void WaveRight(bool simulate)
 {
-     digitalWrite(ElWire[RightArm],HIGH);
+    digitalWrite(ElWire[RightArm],HIGH);
     delay(WaveDelay);
-    digitalWrite(ElWire[RightArm],LOWH);
+    digitalWrite(ElWire[RightArm],LOW);
     delay(WaveDelay);
     digitalWrite(ElWire[RightLeg],HIGH);
     digitalWrite(ElWire[RightBody],HIGH);      
@@ -216,16 +238,16 @@ void WaveRight(bool simulate)
     digitalWrite(ElWire[RightBody],LOW); 
     delay(WaveDelay);
     digitalWrite(ElWire[Head],HIGH);
-    digitalWrite(ElWire[EYES],HIGH); 
+    digitalWrite(ElWire[Eyes],HIGH); 
     delay(WaveDelay);
     digitalWrite(ElWire[Head],LOW);
-    digitalWrite(ElWire[EYES],LOW); 
+    digitalWrite(ElWire[Eyes],LOW); 
     delay(WaveDelay);
     digitalWrite(ElWire[LeftLeg],HIGH);
     digitalWrite(ElWire[LeftBody],HIGH); 
     delay(WaveDelay);
     digitalWrite(ElWire[LeftLeg],LOW);
-    digitalWrite(ElWire[LeftBody,LOW); 
+    digitalWrite(ElWire[LeftBody],LOW); 
     delay(WaveDelay);
     digitalWrite(ElWire[LeftArm],HIGH);
     digitalWrite(ElWire[LeftArm],HIGH); 
@@ -234,7 +256,7 @@ void WaveRight(bool simulate)
     digitalWrite(ElWire[LeftArm],LOW);
 }
 
-void waveLeft(bool Simulate)
+void WaveLeft(bool Simulate)
 {
     delay(WaveDelay);
     digitalWrite(ElWire[LeftArm],HIGH);
@@ -243,17 +265,17 @@ void waveLeft(bool Simulate)
     digitalWrite(ElWire[LeftArm],LOW);
     digitalWrite(ElWire[LeftArm],LOW); 
     delay(WaveDelay);
-    digitalWrite(ElWire[LeftLeg],High);
-    digitalWrite(ElWire[LeftBody],High);
+    digitalWrite(ElWire[LeftLeg],HIGH);
+    digitalWrite(ElWire[LeftBody],HIGH);
     delay(WaveDelay);
-    digitalWrite(ElWire[LeftLeg],Low);
-    digitalWrite(ElWire[LeftBody],Low);
+    digitalWrite(ElWire[LeftLeg],LOW);
+    digitalWrite(ElWire[LeftBody],LOW);
     delay(WaveDelay);
     digitalWrite(ElWire[Head],HIGH);
-    digitalWrite(ElWire[EYES],HIGH); 
+    digitalWrite(ElWire[Eyes],HIGH); 
     delay(WaveDelay);
     digitalWrite(ElWire[Head],LOW);
-    digitalWrite(ElWire[EYES],LOW); 
+    digitalWrite(ElWire[Eyes],LOW); 
     delay(WaveDelay);
     digitalWrite(ElWire[RightLeg],HIGH);
     digitalWrite(ElWire[RightBody],HIGH);      
@@ -263,7 +285,7 @@ void waveLeft(bool Simulate)
     delay(WaveDelay);
     digitalWrite(ElWire[RightArm],HIGH);
     delay(WaveDelay);
-    digitalWrite(ElWire[RightArm],LOWH);
+    digitalWrite(ElWire[RightArm],LOW);
     
 }
 
@@ -271,8 +293,8 @@ void waveLeft(bool Simulate)
 void Wave(void)
 {
     //starts on Graces Right
-    WaveRight(me == Grace);//Grace
-    WaveRight(me == Keith);//Keith
+    WaveRight(me == Grace);//Graces version
+    WaveRight(me == Keith);//Keiths version
     
     //and back again
     WaveLeft(me == Grace);
