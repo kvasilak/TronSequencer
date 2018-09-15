@@ -18,19 +18,19 @@
 // Set up nRF24L01 radio on SPI bus plus pins 9 & 10 (CE & CS)
 RF24 radio(9,10);
 
-// Pins on the LED board for LED's
-const uint8_t led_pins[] = { 2,3,4,5,6,7,8,13 };
+// EL Enable Pins on the EL Sequencer
+const uint8_t ElWire[] = { 2,3,4,5,6,7,8,13 };
 
 // Single radio pipe address for the 2 nodes to communicate.
 const uint64_t pipe = 0xE8E8F0F0E1LL;
 uint8_t state = 0;
-void *StateFuncs[] = {AllOff,PowerUp,PowerDown,MotorCycle,KeithOn,GraceOn};
+void *StateFuncs[] = {AllOff,PowerUp,PowerDown,MotorCycle,KeithOn,GraceOn, Wave};
 
 void setup(void)
 {
   Serial.begin(115200);
   printf_begin();
-  printf("\n\rRF24/examples/led_remote/\n\r");
+  printf("\n\rRF24/EL wire TRON Sequencer/\n\r");
   printf("ROLE: Sequencer\n\r");
 
   radio.begin();
@@ -81,48 +81,50 @@ void AllOff(void)
 {
     // Turn EL Off
     int i;
-    for(i=0;i<sizeof(led_pins); i++;)
+    for(i=0;i<sizeof(ElWire); i++;)
     {
-      pinMode(led_pins[i],OUTPUT);
-      digitalWrite(led_pins[i],HIGH);
+      pinMode(ElWire[i],OUTPUT);
+      digitalWrite(ElWire[i],HIGH);
     }
 }
 
 //lright leg on, right bodyon
 // left leg on, right leg on
 //arms on, head on, eyes on
+//
+// the power up sequence is 3 seconds long
 void PowerUp(void)
 {
-    digitalWrite(led_pins[LeftLeg],LOW);
+    digitalWrite(ElWire[LeftLeg],LOW);
     delay(100);
-    digitalWrite(led_pins[RightLeg],LOW);
+    digitalWrite(ElWire[RightLeg],LOW);
     delay(200);
     
-    digitalWrite(led_pins[LeftBody],LOW);
+    digitalWrite(ElWire[LeftBody],LOW);
     delay(100);
-    digitalWrite(led_pins[RightBody],LOW);
+    digitalWrite(ElWire[RightBody],LOW);
     delay(500);
     
     //arms
-    digitalWrite(led_pins[LeftArm],LOW);
+    digitalWrite(ElWire[LeftArm],LOW);
     delay(100);
-    digitalWrite(led_pins[LeftArm],LOW);
+    digitalWrite(ElWire[LeftArm],LOW);
     delay(100);
-    digitalWrite(led_pins[LeftArm],HIGH);
+    digitalWrite(ElWire[LeftArm],HIGH);
     delay(100);
-    digitalWrite(led_pins[LeftArm],HIGH);
+    digitalWrite(ElWire[LeftArm],HIGH);
     delay(100);
-    digitalWrite(led_pins[LeftArm],LOW);
-    digitalWrite(led_pins[LeftArm],LOW);
+    digitalWrite(ElWire[LeftArm],LOW);
+    digitalWrite(ElWire[LeftArm],LOW);
     delay(210);
     
-    digitalWrite(led_pins[Head],LOW);
+    digitalWrite(ElWire[Head],LOW);
     delay(100);
-    digitalWrite(led_pins[Eyes],LOW);
+    digitalWrite(ElWire[Eyes],LOW);
     delay(100);
-    digitalWrite(led_pins[Eyes],HIGH);
+    digitalWrite(ElWire[Eyes],HIGH);
     delay(100);
-    digitalWrite(led_pins[Eyes],LOW);
+    digitalWrite(ElWire[Eyes],LOW);
 }
 
 void BodyPwrDwn(void)
@@ -131,22 +133,22 @@ void BodyPwrDwn(void)
     
     for(i=0;i<10;i++)
     {
-        digitalWrite(led_pins[LeftLeg],HIGH);
-        digitalWrite(led_pins[RightLeg],HIGH);
+        digitalWrite(ElWire[LeftLeg],HIGH);
+        digitalWrite(ElWire[RightLeg],HIGH);
        
-        digitalWrite(led_pins[LeftBody],HIGH);
-        digitalWrite(led_pins[RightBody],HIGH);
-        digitalWrite(led_pins[LeftArm],HIGH);
-        digitalWrite(led_pins[LeftArm],HIGH);
+        digitalWrite(ElWire[LeftBody],HIGH);
+        digitalWrite(ElWire[RightBody],HIGH);
+        digitalWrite(ElWire[LeftArm],HIGH);
+        digitalWrite(ElWire[LeftArm],HIGH);
         delay(i*10); //on more and more each loop
         
-        digitalWrite(led_pins[LeftLeg],LOW);
-        digitalWrite(led_pins[RightLeg],LOW);
+        digitalWrite(ElWire[LeftLeg],LOW);
+        digitalWrite(ElWire[RightLeg],LOW);
        
-        digitalWrite(led_pins[LeftBody],LOW);
-        digitalWrite(led_pins[RightBody],LOW);
-        digitalWrite(led_pins[LeftArm],LOW);
-        digitalWrite(led_pins[LeftArm],LOW);
+        digitalWrite(ElWire[LeftBody],LOW);
+        digitalWrite(ElWire[RightBody],LOW);
+        digitalWrite(ElWire[LeftArm],LOW);
+        digitalWrite(ElWire[LeftArm],LOW);
         delay(100-(i*10));//off more and more each loop
     }
 }
@@ -159,25 +161,25 @@ void PowerDown(void)
 {
   BodyPwrDwnr();
   
-  digitalWrite(led_pins[Head],HIGH);
+  digitalWrite(ElWire[Head],HIGH);
   delay(100);
-  digitalWrite(led_pins[Head],LOW);
+  digitalWrite(ElWire[Head],LOW);
   delay(500);
-  digitalWrite(led_pins[eyes],HIGH);
+  digitalWrite(ElWire[eyes],HIGH);
   delay(100);
-  digitalWrite(led_pins[Eyes],LOW);
+  digitalWrite(ElWire[Eyes],LOW);
   delay(500);
-  digitalWrite(led_pins[Head],HIGH);
+  digitalWrite(ElWire[Head],HIGH);
   delay(500);
-  digitalWrite(led_pins[Eyes],HIGH);
+  digitalWrite(ElWire[Eyes],HIGH);
   delay(500);
-  digitalWrite(led_pins[Eyes],LOW);
+  digitalWrite(ElWire[Eyes],LOW);
   delay(500);
-  digitalWrite(led_pins[Eyes],HIGH);
+  digitalWrite(ElWire[Eyes],HIGH);
   delay(1000);
-  digitalWrite(led_pins[Eyes],LOW);
+  digitalWrite(ElWire[Eyes],LOW);
   delay(100);
-  digitalWrite(led_pins[Eyes],HIGH);
+  digitalWrite(ElWire[Eyes],HIGH);
 }
 
 void MotorCycle(void)
@@ -197,74 +199,82 @@ void GraceOn(void)
 }
 
 #define WaveDelay 100
+
+void WaveRight(bool simulate)
+{
+     digitalWrite(ElWire[RightArm],HIGH);
+    delay(WaveDelay);
+    digitalWrite(ElWire[RightArm],LOWH);
+    delay(WaveDelay);
+    digitalWrite(ElWire[RightLeg],HIGH);
+    digitalWrite(ElWire[RightBody],HIGH);      
+    delay(WaveDelay);
+    digitalWrite(ElWire[RightLeg],LOW);
+    digitalWrite(ElWire[RightBody],LOW); 
+    delay(WaveDelay);
+    digitalWrite(ElWire[Head],HIGH);
+    digitalWrite(ElWire[EYES],HIGH); 
+    delay(WaveDelay);
+    digitalWrite(ElWire[Head],LOW);
+    digitalWrite(ElWire[EYES],LOW); 
+    delay(WaveDelay);
+    digitalWrite(ElWire[LeftLeg],HIGH);
+    digitalWrite(ElWire[LeftBody],HIGH); 
+    delay(WaveDelay);
+    digitalWrite(ElWire[LeftLeg],LOW);
+    digitalWrite(ElWire[LeftBody,LOW); 
+    delay(WaveDelay);
+    digitalWrite(ElWire[LeftArm],HIGH);
+    digitalWrite(ElWire[LeftArm],HIGH); 
+    delay(WaveDelay);
+    digitalWrite(ElWire[LeftArm],LOW);
+    digitalWrite(ElWire[LeftArm],LOW);
+}
+
+void waveLeft(bool Simulate)
+{
+    delay(WaveDelay);
+    digitalWrite(ElWire[LeftArm],HIGH);
+    digitalWrite(ElWire[LeftArm],HIGH); 
+    delay(WaveDelay);
+    digitalWrite(ElWire[LeftArm],LOW);
+    digitalWrite(ElWire[LeftArm],LOW); 
+    delay(WaveDelay);
+    digitalWrite(ElWire[LeftLeg],High);
+    digitalWrite(ElWire[LeftBody],High);
+    delay(WaveDelay);
+    digitalWrite(ElWire[LeftLeg],Low);
+    digitalWrite(ElWire[LeftBody],Low);
+    delay(WaveDelay);
+    digitalWrite(ElWire[Head],HIGH);
+    digitalWrite(ElWire[EYES],HIGH); 
+    delay(WaveDelay);
+    digitalWrite(ElWire[Head],LOW);
+    digitalWrite(ElWire[EYES],LOW); 
+    delay(WaveDelay);
+    digitalWrite(ElWire[RightLeg],HIGH);
+    digitalWrite(ElWire[RightBody],HIGH);      
+    delay(WaveDelay);
+    digitalWrite(ElWire[RightLeg],LOW);
+    digitalWrite(ElWire[RightBody],LOW); 
+    delay(WaveDelay);
+    digitalWrite(ElWire[RightArm],HIGH);
+    delay(WaveDelay);
+    digitalWrite(ElWire[RightArm],LOWH);
+    
+}
+
 //start all on, send off wave through us as we do the wave
 void Wave(void)
 {
     //starts on Graces Right
-    digitalWrite(led_pins[RightArm],HIGH);
-    delay(WaveDelay);
-    digitalWrite(led_pins[RightArm],LOWH);
-    delay(WaveDelay);
-    digitalWrite(led_pins[RightLeg],HIGH);
-    digitalWrite(led_pins[RightBody],HIGH);      
-    delay(WaveDelay);
-    digitalWrite(led_pins[RightLeg],LOW);
-    digitalWrite(led_pins[RightBody],LOW); 
-    delay(WaveDelay);
-    digitalWrite(led_pins[Head],HIGH);
-    digitalWrite(led_pins[EYES],HIGH); 
-    delay(WaveDelay);
-    digitalWrite(led_pins[Head],LOW);
-    digitalWrite(led_pins[EYES],LOW); 
-    delay(WaveDelay);
-    digitalWrite(led_pins[LeftLeg],HIGH);
-    digitalWrite(led_pins[LeftBody],HIGH); 
-    delay(WaveDelay);
-    digitalWrite(led_pins[LeftLeg],LOW);
-    digitalWrite(led_pins[LeftBody,LOW); 
-    delay(WaveDelay);
-    digitalWrite(led_pins[LeftArm],HIGH);
-    digitalWrite(led_pins[LeftArm],HIGH); 
-    delay(WaveDelay);
-    digitalWrite(led_pins[LeftArm],LOW);
-    digitalWrite(led_pins[LeftArm],LOW); 
+    WaveRight(me == Grace);//Grace
+    WaveRight(me == Keith);//Keith
     
     //and back again
-    delay(WaveDelay);
-    digitalWrite(led_pins[LeftArm],HIGH);
-    digitalWrite(led_pins[LeftArm],HIGH); 
-    delay(WaveDelay);
-    digitalWrite(led_pins[LeftArm],LOW);
-    digitalWrite(led_pins[LeftArm],LOW); 
-    delay(WaveDelay);
-    digitalWrite(led_pins[LeftLeg],High);
-    digitalWrite(led_pins[LeftBody],High);
-    delay(WaveDelay);
-    digitalWrite(led_pins[LeftLeg],Low);
-    digitalWrite(led_pins[LeftBody],Low);
-    delay(WaveDelay);
-    digitalWrite(led_pins[Head],HIGH);
-    digitalWrite(led_pins[EYES],HIGH); 
-    delay(WaveDelay);
-    digitalWrite(led_pins[Head],LOW);
-    digitalWrite(led_pins[EYES],LOW); 
-    delay(WaveDelay);
-    digitalWrite(led_pins[RightLeg],HIGH);
-    digitalWrite(led_pins[RightBody],HIGH);      
-    delay(WaveDelay);
-    digitalWrite(led_pins[RightLeg],LOW);
-    digitalWrite(led_pins[RightBody],LOW); 
-    delay(WaveDelay);
-    digitalWrite(led_pins[RightArm],HIGH);
-    delay(WaveDelay);
-    digitalWrite(led_pins[RightArm],LOWH);
+    WaveLeft(me == Grace);
+    WaveLeft(me == Keith);
+ 
 }
 
 
-digitalWrite(led_pins[LeftLeg],HIGH);
-        digitalWrite(led_pins[RightLeg],HIGH);
-       
-        digitalWrite(led_pins[LeftBody],HIGH);
-        digitalWrite(led_pins[RightBody],HIGH);
-        digitalWrite(led_pins[LeftArm],HIGH);
-        digitalWrite(led_pins[LeftArm],HIGH);
