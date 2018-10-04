@@ -78,6 +78,8 @@ void setup(void)
     digitalWrite(ElWire[i],HIGH);
   }
 
+  delay(10000);
+
   AllOff();
 }
 
