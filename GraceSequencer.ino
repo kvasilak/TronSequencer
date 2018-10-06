@@ -66,6 +66,8 @@ void setup(void)
   // Open pipes to other nodes for communication
   // This simple sketch opens a single pipes for these two nodes to communicate
   // back and forth.  One listens on it, the other talks to it.
+
+  radio.setChannel(120);
   
   radio.openReadingPipe(1,pipe);
   radio.startListening();
